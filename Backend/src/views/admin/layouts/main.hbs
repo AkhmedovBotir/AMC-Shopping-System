@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}} | Do'konlar boshqaruvi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { min-height: calc(100vh - 56px); background: #343a40; color: #fff; }
+        .sidebar .nav-link { color: rgba(255,255,255,.8); }
+        .sidebar .nav-link:hover { color: #fff; }
+        .sidebar .nav-link.active { background: rgba(255,255,255,.1); color: #fff; }
+        .sidebar .nav-link i { margin-right: 10px; }
+        .content { padding: 20px; }
+        .card { border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-header { font-weight: 600; }
+        .table th { font-weight: 600; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="/admin">
+                <i class="bi bi-shop"></i> Do'konlar boshqaruvi
+            </a>
+            
+            <div class="d-flex align-items-center ms-auto">
+                <!-- Notification Dropdown -->
+                <div class="dropdown me-3">
+                    <button class="btn btn-light position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge">0</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationDropdown" style="min-width: 350px;">
+                        <li class="dropdown-header bg-light py-2">Bildirishnomalar</li>
+                        <li><div class="dropdown-divider m-0"></div></li>
+                        <div id="notificationList" class="overflow-auto" style="max-height: 400px;">
+                            <div class="text-center p-3">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Yuklanmoqda...</span>
+                                </div>
+                                <span class="ms-2">Yuklanmoqda...</span>
+                            </div>
+                        </div>
+                        <li><div class="dropdown-divider m-0"></div></li>
+                        <li>
+                            <a class="dropdown-item text-center py-2" href="/admin/store-owners">
+                                Barchasini ko'rish
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <button class="btn btn-light" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i> Chiqish
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="row">
+            <!-- Main content (full width) -->
+            <div class="col-12 px-4 content">
+                {{> flash}}
+                {{{body}}}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            window.location.href = '/admin/login';
+        });
+
+        // Load notifications when dropdown is shown
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        if (notificationDropdown) {
+            notificationDropdown.addEventListener('shown.bs.dropdown', loadNotifications);
+        }
+
+        async function loadNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            const notificationBadge = document.getElementById('notificationBadge');
+            
+            try {
+                const response = await fetch('/api/notifications', {
+                    headers: {
+                        'Authorization': localStorage.getItem('token') || ''
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Xatolik yuz berdi');
+                
+                const { data } = await response.json();
+                const totalNotifications = data.expired.length + data.endingSoon.length;
+                
+                // Update badge
+                notificationBadge.textContent = totalNotifications;
+                notificationBadge.style.display = totalNotifications > 0 ? 'block' : 'none';
+                
+                // Clear loading state
+                notificationList.innerHTML = '';
+                
+                // Add expired subscriptions
+                if (data.expired.length > 0) {
+                    const expiredHeader = document.createElement('div');
+                    expiredHeader.className = 'dropdown-header bg-light bg-opacity-50 fw-bold';
+                    expiredHeader.textContent = `Muddati o'tgan (${data.expired.length})`;
+                    notificationList.appendChild(expiredHeader);
+                    
+                    data.expired.forEach(item => {
+                        notificationList.appendChild(createNotificationItem(item, true));
+                    });
+                }
+                
+                // Add ending soon subscriptions
+                if (data.endingSoon.length > 0) {
+                    const endingSoonHeader = document.createElement('div');
+                    endingSoonHeader.className = 'dropdown-header bg-light bg-opacity-50 fw-bold';
+                    endingSoonHeader.textContent = `Tugash arafasida (${data.endingSoon.length})`;
+                    notificationList.appendChild(endingSoonHeader);
+                    
+                    data.endingSoon.forEach(item => {
+                        notificationList.appendChild(createNotificationItem(item, false));
+                    });
+                }
+                
+                // Show empty state if no notifications
+                if (totalNotifications === 0) {
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'text-center p-3 text-muted';
+                    emptyState.innerHTML = '<i class="bi bi-check-circle fs-4 d-block mb-2"></i> Yangi bildirishnomalar yo\'q';
+                    notificationList.appendChild(emptyState);
+                }
+                
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                notificationList.innerHTML = `
+                    <div class="alert alert-danger m-2">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Bildirishnomalarni yuklashda xatolik
+                    </div>`;
+            }
+        }
+        
+        function createNotificationItem(item, isExpired) {
+            const itemElement = document.createElement('a');
+            itemElement.href = `/admin/store-owners/${item.id}`;
+            itemElement.className = `dropdown-item d-flex align-items-center ${isExpired ? 'bg-danger bg-opacity-10' : ''}`;
+            
+            const icon = document.createElement('div');
+            icon.className = `me-3 text-${isExpired ? 'danger' : 'warning'}`;
+            icon.innerHTML = isExpired ? '<i class="bi bi-exclamation-triangle-fill fs-5"></i>' : 
+                                         '<i class="bi bi-clock-history fs-5"></i>';
+            
+            const content = document.createElement('div');
+            content.className = 'small';
+            
+            const title = document.createElement('div');
+            title.className = 'fw-bold';
+            title.textContent = item.shopName || 'Noma\'lum do\'kon';
+            
+            const text = document.createElement('div');
+            text.className = 'text-muted';
+            text.textContent = isExpired 
+                ? `Muddati o'tgan: ${new Date(item.endDate).toLocaleDateString('uz-UZ')}`
+                : `Qolgan kun: ${item.daysLeft} kun`;
+            
+            content.appendChild(title);
+            content.appendChild(text);
+            
+            itemElement.appendChild(icon);
+            itemElement.appendChild(content);
+            
+            return itemElement;
+        }
+        
+        // Load notifications every 5 minutes
+        setInterval(loadNotifications, 5 * 60 * 1000);
+        
+        // Token mavjudligini tekshirish
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const currentPath = window.location.pathname;
+            
+            // Agar token yo'q bo'lsa va login sahifasida bo'lmasa
+            if (!token && !currentPath.includes('login')) {
+                window.location.href = '/admin/login';
+            }
+            
+            // Agar token bo'lsa va login sahifasida bo'lsa
+            if (token && currentPath.includes('login')) {
+                window.location.href = '/admin';
+            }
+        });
+    </script>
+</body>
+</html>

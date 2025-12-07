@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "AMC-store Owner",
+    "slug": "amc-admin",
+    "version": "1.0.0",
+    "versionCode": 1,
+    "orientation": "portrait",
+    "android": {
+      "package": "com.amc.admin",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "edgeToEdgeEnabled": true
+    },
+    "icon": "./assets/logo.png",
+    "scheme": "AMC",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aab3b75d-2ac2-4190-b340-d24a2cd0ff90"
+      }
+    },
+    "owner": "baxrom"
+  }
+}

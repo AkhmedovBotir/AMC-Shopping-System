@@ -1,0 +1,286 @@
+{{! Do'kon egalarining ro'yxati }}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-people me-2"></i>Do'kon egalari
+    </h1>
+    <a href="/admin/store-owners/new" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Yangi qo'shish
+    </a>
+</div>
+
+<!-- Filtrlash paneli -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form class="row g-3" id="filterForm">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Qidirish</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Ism, telefon yoki username bo'yicha qidirish...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Barchasi</option>
+                    <option value="active">Faol</option>
+                    <option value="inactive">Nofaol</option>
+                    <option value="trial">Sinov muddati</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="subscription" class="form-label">Obuna turi</label>
+                <select class="form-select" id="subscription" name="subscription">
+                    <option value="">Barchasi</option>
+                    <option value="trial">Sinov</option>
+                    <option value="paid">Pullik</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel me-1"></i> Filtrlash
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Do'kon egasi kartalari -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="storeOwnersContainer">
+    {{#each owners}}
+    <div class="col">
+        <div class="card h-100 store-owner-card" data-status="{{this.status}}" data-subscription="{{this.subscription.type}}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">{{this.name}}</h5>
+                <span class="badge bg-{{#ifEq this.status 'active'}}success{{else}}danger{{/ifEq}}">
+                    {{this.status}}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-light rounded-circle p-3 me-3">
+                        <i class="bi bi-shop fs-4 text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">{{this.shopName}}</h6>
+                        <small class="text-muted">{{this.phone}}</small>
+                    </div>
+                </div>
+                
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><i class="bi bi-person me-2"></i>Foydalanuvchi nomi</span>
+                        <span class="fw-bold">{{this.username}}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><i class="bi bi-credit-card me-2"></i>Obuna turi</span>
+                        <span class="badge bg-{{#ifEq this.subscription.type 'paid'}}success{{else}}warning text-dark{{/ifEq}}">
+                            {{this.subscription.type}}
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><i class="bi bi-calendar-check me-2"></i>Muddati</span>
+                        <span class="text-{{#if this.subscription.isActive}}success{{else}}danger{{/if}}">
+                            {{formatDate this.subscription.endDate}}
+                        </span>
+                    </li>
+                </ul>
+                
+                <div class="d-flex justify-content-between mt-auto">
+                    <button class="btn btn-sm btn-outline-primary js-edit" data-id="{{this._id}}">
+                        <i class="bi bi-pencil"></i> Tahrirlash
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary js-view" data-id="{{this._id}}">
+                        <i class="bi bi-eye"></i> Ko'rish
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger js-delete" data-id="{{this._id}}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted d-block">ID: {{this._id}}</small>
+                        <span class="badge bg-{{#ifEq this.subscription.type 'paid'}}success{{else}}warning text-dark{{/ifEq}} small">
+                            {{#ifEq this.subscription.type 'paid'}}
+                                <i class="bi bi-star-fill me-1"></i> Pullik obuna
+                            {{else}}
+                                <i class="bi bi-clock-history me-1"></i> Sinov muddati
+                            {{/ifEq}}
+                        </span>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input js-status" type="checkbox" 
+                               data-id="{{this._id}}" 
+                               title="{{#ifEq this.status 'active'}}Faol{{else}}Nofaol{{/ifEq}}"
+                               {{#ifEq this.status "active"}}checked{{/ifEq}}
+                               {{#unless this.subscription.isActive}}disabled{{/unless}}>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<!-- Pagination -->
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Oldingi</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+            <a class="page-link" href="#">Keyingi</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Modal for delete confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">O'chirishni tasdiqlash</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Rostan ham bu do'kon egasini o'chirmoqchimisiz? Ushbu amalni qaytarib bo'lmaydi.</p>
+                <p class="text-danger"><small>Diqqat! Barcha bog'liq ma'lumotlar ham o'chiriladi.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">O'chirish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        let storeOwnerToDelete = null;
+        
+        // Delete button click
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.js-delete')) {
+                e.preventDefault();
+                storeOwnerToDelete = e.target.closest('.js-delete').dataset.id;
+                deleteModal.show();
+            }
+            
+            // Edit button click
+            if (e.target.closest('.js-edit')) {
+                e.preventDefault();
+                const id = e.target.closest('.js-edit').dataset.id;
+                window.location.href = `/admin/store-owners/${id}/edit`;
+            }
+            
+            // View button click
+            if (e.target.closest('.js-view')) {
+                e.preventDefault();
+                const id = e.target.closest('.js-view').dataset.id;
+                // Add view functionality here
+                console.log('View store owner:', id);
+            }
+        });
+        
+        // Confirm delete
+        document.getElementById('confirmDelete')?.addEventListener('click', async function() {
+            if (!storeOwnerToDelete) return;
+            
+            try {
+                const res = await fetch(`/api/store-owners/${storeOwnerToDelete}`, { 
+                    method: 'DELETE', 
+                    headers: { 
+                        'Authorization': localStorage.getItem('token'),
+                        'Content-Type': 'application/json'
+                    } 
+                });
+                
+                if (res.ok) {
+                    deleteModal.hide();
+                    location.reload();
+                } else {
+                    const error = await res.json();
+                    throw new Error(error.message || 'Xatolik yuz berdi');
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+        
+        // Toggle status
+        document.addEventListener('change', async function(e) {
+            if (e.target.classList.contains('js-status')) {
+                const id = e.target.dataset.id;
+                const isActive = e.target.checked;
+                
+                try {
+                    const newStatus = isActive ? 'active' : 'inactive';
+                    const res = await fetch(`/api/store-owners/${id}/status`, {
+                        method: 'PATCH',
+                        headers: { 
+                            'Authorization': localStorage.getItem('token') || '',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    
+                    if (!res.ok) {
+                        const error = await res.json();
+                        throw new Error(error.message || 'Statusni o\'zgartirishda xatolik');
+                    }
+                    
+                    // Update UI
+                    const card = e.target.closest('.store-owner-card');
+                    const statusBadge = card.querySelector('.badge');
+                    if (statusBadge) {
+                        statusBadge.className = `badge bg-${newStatus === 'active' ? 'success' : 'danger'}`;
+                        statusBadge.textContent = newStatus;
+                        // Update data attribute for filtering
+                        card.dataset.status = newStatus;
+                    }
+                    
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                    e.target.checked = !isActive; // Revert the toggle
+                    alert(error.message || 'Xatolik yuz berdi');
+                }
+            }
+        });
+        
+        // Filter form submission
+        document.getElementById('filterForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const filters = Object.fromEntries(formData.entries());
+            
+            // Apply filters to cards
+            const cards = document.querySelectorAll('.store-owner-card');
+            cards.forEach(card => {
+                const matchesStatus = !filters.status || card.dataset.status === filters.status;
+                const matchesSubscription = !filters.subscription || card.dataset.subscription === filters.subscription;
+                const searchText = filters.search?.toLowerCase();
+                const matchesSearch = !searchText || 
+                    card.textContent.toLowerCase().includes(searchText);
+                
+                if (matchesStatus && matchesSubscription && matchesSearch) {
+                    card.closest('.col').style.display = '';
+                } else {
+                    card.closest('.col').style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Helper function to format date
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('uz-UZ', options);
+    }
+</script>

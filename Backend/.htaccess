@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Handle CORS
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+Header set Access-Control-Allow-Credentials "true"
+
+# Redirect all requests to index.js
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.js [QSA,L]
+
+# Prevent access to .env and other sensitive files
+<FilesMatch "^\.env|\.git|\.htaccess$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

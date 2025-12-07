@@ -1,0 +1,15 @@
+[Unit]
+Description=Shop Database Backup Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/node /home/botir/Desktop/shops/backend/src/scripts/backup.js
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/shop-backup.log
+StandardError=append:/var/log/shop-backup.error.log
+
+[Install]
+WantedBy=multi-user.target 

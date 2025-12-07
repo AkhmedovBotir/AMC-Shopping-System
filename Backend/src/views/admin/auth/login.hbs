@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panelga Kirish</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --light-bg: #f8f9fa;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .login-container {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .login-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2b2d42;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-floating > label {
+            padding: 1rem 0.75rem;
+        }
+        
+        .form-control, .form-control:focus {
+            height: 56px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-right: none;
+            border-radius: 8px 0 0 8px !important;
+        }
+        
+        .input-group .form-control {
+            border-radius: 0 8px 8px 0 !important;
+        }
+        
+        .btn-login {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-login:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            z-index: 10;
+            cursor: pointer;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .form-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .language-switcher {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        
+        .language-switcher .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary btn-sm active" data-lang="uz">O'Z</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-lang="ru">РУ</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-lang="en">EN</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="/images/logo.png" alt="Logo" class="mb-3">
+                <h1>Admin Panel</h1>
+                <p>Tizimga kirish uchun hisobingizga kiring</p>
+            </div>
+            
+            <div id="errorAlert" class="alert alert-danger d-none" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="errorMessage"></span>
+            </div>
+            
+            <form id="loginForm" novalidate>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Foydalanuvchi nomi</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Foydalanuvchi nomingizni kiriting" required>
+                    </div>
+                    <div class="invalid-feedback">Iltimos, foydalanuvchi nomini kiriting</div>
+                </div>
+                
+                <div class="mb-4 position-relative">
+                    <label for="password" class="form-label">Parol</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Parolingizni kiriting" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback">Iltimos, parolni kiriting</div>
+                    <div class="d-flex justify-content-end mt-2">
+                        <a href="/admin/forgot-password" class="text-decoration-none small">Parolni unutdingizmi?</a>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-login" type="submit" id="loginButton">
+                        <span class="spinner-border spinner-border-sm d-none" id="loginSpinner" role="status" aria-hidden="true"></span>
+                        <span id="loginText"><i class="bi bi-box-arrow-in-right me-1"></i> Kirish</span>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="mb-0 text-muted">
+                    &copy; {{currentYear}} Barcha huquqlar himoyalangan
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            const loginButton = document.getElementById('loginButton');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginText = document.getElementById('loginText');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? 
+                    '<i class="bi bi-eye"></i>' : 
+                    '<i class="bi bi-eye-slash"></i>';
+            });
+            
+            // Language switcher
+            document.querySelectorAll('[data-lang]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    // Remove active class from all buttons
+                    document.querySelectorAll('[data-lang]').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    // Here you would typically make an AJAX call to change the language
+                    console.log('Switching to language:', lang);
+                });
+            });
+            
+            // Form submission
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Hide error alert
+                errorAlert.classList.add('d-none');
+                
+                // Validate form
+                if (!loginForm.checkValidity()) {
+                    loginForm.classList.add('was-validated');
+                    return;
+                }
+                
+                // Show loading state
+                loginButton.disabled = true;
+                loginSpinner.classList.remove('d-none');
+                loginText.innerHTML = 'Tekshirilmoqda...';
+                
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                
+                try {
+                    const response = await fetch('/api/admin/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Xatolik yuz berdi');
+                    }
+                    
+                    // Login successful
+                    localStorage.setItem('token', data.token);
+                    
+                    // Show success state briefly before redirect
+                    loginButton.classList.remove('btn-primary');
+                    loginButton.classList.add('btn-success');
+                    loginSpinner.classList.add('d-none');
+                    loginText.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Muvaffaqiyatli!';
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard';
+                    }, 800);
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    
+                    // Show error message
+                    errorMessage.textContent = error.message || 'Kirish muvaffaqiyatsiz. Iltimos, qaytadan urinib ko\'ring.';
+                    errorAlert.classList.remove('d-none');
+                    
+                    // Reset button state
+                    loginButton.disabled = false;
+                    loginSpinner.classList.add('d-none');
+                    loginText.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Kirish';
+                    
+                    // Scroll to error message
+                    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Shake animation on error
+                    loginForm.classList.add('shake-animation');
+                    setTimeout(() => {
+                        loginForm.classList.remove('shake-animation');
+                    }, 500);
+                }
+            });
+            
+            // Add shake animation class
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+                .shake-animation {
+                    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

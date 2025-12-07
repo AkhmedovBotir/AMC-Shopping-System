@@ -1,0 +1,30 @@
+{
+  "name": "bar-admin-backend",
+  "version": "1.0.0",
+  "description": "Bar admin backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "check-subscriptions": "node src/scripts/checkSubscriptions.js",
+    "subscription-cron": "node src/scripts/subscriptionCron.js",
+    "start-with-cron": "concurrently \"node src/index.js\" \"node src/scripts/subscriptionCron.js\""
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^8.2.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.3",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.0.3",
+    "morgan": "^1.10.0",
+    "node-cron": "^4.1.1",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

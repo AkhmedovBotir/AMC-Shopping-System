@@ -1,0 +1,244 @@
+<div class="card">
+    <div class="card-header bg-white">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/admin/store-owners">Do'kon egalari</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{#if owner}}Tahrirlash{{else}}Yangi qo'shish{{/if}}
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="card-body">
+        <form id="storeOwnerForm" class="needs-validation" novalidate>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Asosiy ma'lumotlar</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">F.I.Sh <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{owner.name}}" required>
+                                <div class="invalid-feedback">Iltimos, ism va familiyani kiriting</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="shopName" class="form-label">Do'kon nomi <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="shopName" name="shopName" 
+                                       value="{{owner.shopName}}" required>
+                                <div class="invalid-feedback">Iltimos, do'kon nomini kiriting</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Telefon raqam <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+998</span>
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                           value="{{owner.phone}}" pattern="[0-9]{9}" 
+                                           placeholder="901234567" required>
+                                </div>
+                                <div class="form-text">Telefon raqamni kiriting (masalan: 901234567)</div>
+                                <div class="invalid-feedback">Iltimos, to'g'ri telefon raqam kiriting</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Kirish ma'lumotlari</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Foydalanuvchi nomi <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">@</span>
+                                    <input type="text" class="form-control" id="username" name="username" 
+                                           value="{{owner.username}}" required>
+                                </div>
+                                <div class="invalid-feedback">Iltimos, foydalanuvchi nomini kiriting</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    Parol {{#if owner}}<span class="text-muted">(o'zgartirish uchun yangi parol kiriting)</span>{{else}}<span class="text-danger">*</span>{{/if}}
+                                </label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           {{#unless owner}}required{{/unless}}>
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    {{#if owner}}
+                                        Parolni o'zgartirmasangiz, avvalgisi saqlanib qoladi
+                                    {{else}}
+                                        Kamida 8 ta belgidan iborat bo'lishi kerak
+                                    {{/if}}
+                                </div>
+                                <div class="invalid-feedback">Iltimos, parol kiriting</div>
+                            </div>
+                            
+                            {{#if owner}}
+                            <div class="mb-3">
+                                <label class="form-label">Holati</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="status" name="status" 
+                                           {{#ifEq owner.status "active"}}checked{{/ifEq}}>
+                                    <label class="form-check-label" for="status">
+                                        {{#ifEq owner.status "active"}}Faol{{else}}Nofaol{{/ifEq}}
+                                    </label>
+                                </div>
+                                <div class="form-text">Do'kon egasining tizimdagi holatini belgilang</div>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/admin/store-owners" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Orqaga
+                </a>
+                <div>
+                    <button type="button" class="btn btn-light me-2" onclick="history.back()">
+                        Bekor qilish
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Saqlash
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0 shadow-none">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Yuklanmoqda...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('storeOwnerForm');
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        });
+    });
+    
+    // Phone number formatting
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.substring(0, 9);
+            this.value = value;
+        });
+    }
+    
+    // Form validation and submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        const isEdit = '{{owner}}' !== '';
+        const method = isEdit ? 'PUT' : 'POST';
+        const url = isEdit ? '{{action}}' : '{{action}}';
+        
+        // Show loading modal
+        loadingModal.show();
+        
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('token')
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.message || 'Xatolik yuz berdi');
+            }
+            
+            // Show success message
+            const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            successToast.show();
+            
+            // Redirect after delay
+            setTimeout(() => {
+                window.location.href = '/admin/store-owners';
+            }, 1500);
+            
+        } catch (error) {
+            console.error('Error:', error);
+            
+            // Show error message
+            const errorToast = document.getElementById('errorToast');
+            const errorMessage = errorToast.querySelector('.toast-body');
+            errorMessage.textContent = error.message || 'Xatolik yuz berdi. Iltimos, qaytadan urinib ko\'ring.';
+            
+            const bsToast = new bootstrap.Toast(errorToast);
+            bsToast.show();
+            
+        } finally {
+            loadingModal.hide();
+        }
+    });
+});
+</script>
+
+<!-- Success Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle me-2"></i> Muvaffaqiyatli saqlandi!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Error Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-exclamation-triangle me-2"></i> Xatolik yuz berdi!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
